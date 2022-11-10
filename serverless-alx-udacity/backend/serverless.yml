@@ -27,14 +27,14 @@ provider:
     IMAGES_S3_BUCKET: serverless-todo-mymobantz-${self:provider.stage}
     SIGNED_URL_EXPIRATION: '300'
 
-  iam:
-    role:
-      statements:
-        - Effect: Allow
-          Action:
-            - xray:PutTelemetryRecords
-            - xray:PutTraceSegments
-          Resource: "*"
+  # iam:
+  #   role:
+  #     statements:
+  #       - Effect: Allow
+  #         Action:
+  #           - xray:PutTelemetryRecords
+  #           - xray:PutTraceSegments
+  #         Resource: "*"
 
 custom:
   documentation:
@@ -43,46 +43,46 @@ custom:
         version: '1.0.0'
         title: Serverless todo API
         description: Serverless todo application for record keeping
-    models:
-      - name: CreateTodoRequest
-        contentType: "application/json"
-        schema:
-          required:
-            - name
-            - dueDate
-          properties:
-            name:
-              minLength: 1
-              type: string
-            dueDate:
-              type: string
-      - name: UpdateTodoRequest
-        contentType: "application/json"
-        schema:
-          required:
-            - name
-            - dueDate
-            - done
-          properties:
-            name:
-              minLength: 1
-              type: string
-            dueDate:
-              type: string
-            done:
-              type: boolean
+    # models:
+    #   - name: CreateTodoRequest
+    #     contentType: "application/json"
+    #     schema:
+    #       required:
+    #         - name
+    #         - dueDate
+    #       properties:
+    #         name:
+    #           minLength: 1
+    #           type: string
+    #         dueDate:
+    #           type: string
+    #   - name: UpdateTodoRequest
+    #     contentType: "application/json"
+    #     schema:
+    #       required:
+    #         - name
+    #         - dueDate
+    #         - done
+    #       properties:
+    #         name:
+    #           minLength: 1
+    #           type: string
+    #         dueDate:
+    #           type: string
+    #         done:
+    #           type: boolean
 
 functions:
 
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
-    iamRoleStatements:
-      - Effect: "Allow"
-        Action:
-          - "xray:PutTraceSegments"
-          - "xray:PutTelemetryRecords"
-        Resource:
-          - "*"
+    # iamRoleStatements:
+    #   - Effect: "Allow"
+    #     Action:
+    #       - "xray:PutTraceSegments"
+    #       - "xray:PutTelemetryRecords"
+    #     Resource:
+    #       - "*"
 
   GetTodos:
     handler: src/lambda/http/getTodos.handler

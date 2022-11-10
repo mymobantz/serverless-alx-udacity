@@ -3,6 +3,7 @@ import * as AWSXRay from 'aws-xray-sdk'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { createLogger } from '../../utils/logger'
 import { TodoItem, UpdateTodoRequest } from '../../models/TodoItem'
+import { Types } from 'aws-sdk/clients/s3';
 
 const XAWS = AWSXRay.captureAWS(AWS)
 
@@ -11,7 +12,9 @@ const logger = createLogger('TodosAccess')
 export class TodoAccess {
   constructor(
     private readonly docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient(),
-    private readonly todosTable = process.env.TODOS_TABLE
+    private readonly todosTable = process.env.TODOS_TABLE,
+    private readonly s3Client: Types = new XAWS.S3({ signatureVersion: 'v4' }),
+    private readonly s3BucketName = process.env.ATTACHMENT_S3_BUCKET
   ) {}
 
   async getTodos(userId: string): Promise<TodoItem[]> {
@@ -64,6 +67,19 @@ export class TodoAccess {
         Key: { userId, todoId }
       })
       .promise();
+  }
+
+  async generateUploadUrl(todoId: string): Promise<string> {
+    logger.info("Generate the Url");
+
+    const url  = this.s3Client.getSignedUrl('putObject', {
+      Bucket: this.s3BucketName,
+      Key: todoId,
+      Expires: 1000,
+    })
+    logger.info(url)
+
+    return url as string
   }
 
   async saveImgUrl(userId: string, todoId: string, bucketName: string): Promise<void> {
