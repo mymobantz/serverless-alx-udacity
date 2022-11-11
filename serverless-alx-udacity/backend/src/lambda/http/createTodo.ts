@@ -22,12 +22,13 @@ export const handler: APIGatewayProxyHandler = async (
   };
 
   try {
-    const newTodo: TodoItem = await createTodo(userId, newTodoData)
+    const item: TodoItem = await createTodo(userId, newTodoData)
     logger.info('Successfully created a new todo item.');
     return {
       statusCode: 201,
       headers,
-      body: JSON.stringify({ item: newTodo })
+      // body: JSON.stringify({ item: newTodo })
+      body: JSON.stringify({ item })
     };
   } catch (error) {
     logger.error(`Error: ${error.message}`);
